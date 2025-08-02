@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Create Account - Amazon Clone{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+  <div class="auth-logo">
+    <img src="{% static 'images/amazon-logo.png' %}" alt="Amazon Logo">
+  </div>
+
+  <div class="auth-form">
+    <h2>Create Account</h2>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-info alert-dismissible fade show">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-warning w-100">Continue</button>
+    </form>
+
+    <div class="auth-footer">
+      <p>By creating an account, you agree to Amazon Clone's Conditions of Use and Privacy Notice.</p>
+    </div>
+
+    <div class="auth-divider">
+      <span>Already have an account?</span>
+    </div>
+
+    <a href="{% url 'login' %}" class="btn btn-light border w-100">Sign in</a>
+  </div>
+</div>
+{% endblock %}

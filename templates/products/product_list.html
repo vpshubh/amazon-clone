@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_title %}
+  <title>Product List - Amazon Clone</title>
+{% endblock %}
+
+{% block extra_meta %}
+  <meta name="description" content="Browse our collection of products.">
+{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/product_list.css' %}">
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'js/product_list.js' %}"></script>
+  <script src="{% static 'js/jquery.min.js' %}"></script>
+  <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+{% endblock %}
+
+{% block extra_styles %}
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .card {
+      margin-bottom: 20px;
+    }
+    .btn-primary {
+      background-color: #007bff;
+      border-color: #007bff;
+    }
+  </style>
+{% endblock %}
+
+{% block extra_links %}
+  <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+{% endblock %}
+
+{% block extra_body %}
+<body class="product-list-page">
+{% endblock %}
+
+{% block extra_header %}
+  <header class="text-center mb-4">
+    <h1>Welcome to Amazon Clone</h1>
+  </header>
+{% endblock %}
+
+{% block extra_navbar %}
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="{% url 'product_list' %}">Amazon Clone</a>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="{% url 'product_list' %}">Products</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'login' %}">Login</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'register' %}">Register</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+{% endblock %}
+
+{% block extra_breadcrumb %}
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'product_list' %}">Home</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Products</li>
+    </ol>
+  </nav>
+{% endblock %}
+
+{% block extra_alerts %}
+  {% if messages %}
+    <div class="alert alert-info" role="alert">
+      {% for message in messages %}
+        {{ message }}
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endblock %}
+
+{% block extra_footer %}
+  <footer class="text-center mt-4">
+    <p>&copy; 2023 Amazon Clone. All rights reserved.</p>
+  </footer>
+{% endblock %}
+
+{% block extra_scripts %}
+  <script>
+    $(document).ready(function() {
+      // Custom JavaScript for product list page
+      console.log("Product list page loaded.");
+    });
+  </script>
+{% endblock %}
+
+{% block content %}
+  <h2>Products</h2>
+  <div class="row">
+    {% for product in products %}
+      <div class="col-md-4">
+        <div class="card mb-4">
+          {% if product.image %}
+            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title">{{ product.name }}</h5>
+            <p class="card-text">{{ product.price }} INR</p>
+            <a href="#" class="btn btn-primary">View Product</a>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p>No products found.</p>
+    {% endfor %}
+  </div>
+{% endblock %}

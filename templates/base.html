@@ -1,0 +1,421 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Amazon Clone{% endblock %}</title>
+    
+    <!-- Preload critical fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    
+    <!-- Meta tags for PWA -->
+    <meta name="theme-color" content="#232f3e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <div class="amazon-loader">
+                <div class="loader-smile"></div>
+                <div class="loader-text">Amazon</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Skip to main content for accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Top Banner (for promotions) -->
+    <div class="top-banner" id="top-banner">
+        <div class="container-fluid">
+            <div class="banner-content">
+                <span class="banner-text">
+                    <i class="fas fa-bolt text-warning me-2"></i>
+                    Free delivery on orders over ₹499. Shop now!
+                </span>
+                <button class="banner-close" onclick="closeBanner()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Header -->
+    <header class="amazon-header" id="main-header">
+        <div class="container-fluid">
+            <div class="row align-items-center header-row">
+                <!-- Logo Section with enhanced animation -->
+                <div class="col-auto">
+                    <a href="{% url 'product_list' %}" class="logo-section">
+                        <div class="logo-container">
+                            <img src="{% static 'images/amazon-logo.png' %}" alt="Amazon" class="amazon-logo">
+                            <span class="logo-text">.in</span>
+                            <div class="logo-glow"></div>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Enhanced Deliver to Section -->
+                <div class="col-auto d-none d-lg-block">
+                    <div class="deliver-to" data-bs-toggle="modal" data-bs-target="#locationModal">
+                        <div class="deliver-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="deliver-content">
+                            <div class="deliver-to-line">Deliver to</div>
+                            <div class="deliver-location">
+                                <span class="location-text">Mumbai 400001</span>
+                                <i class="fas fa-caret-down ms-1"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enhanced Search Section with AI suggestions -->
+                <div class="col search-section">
+                    <div class="search-container">
+                        <div class="search-bar">
+                            <div class="search-category-dropdown">
+                                <select class="search-dropdown" id="searchCategory">
+                                    <option value="all">All Categories</option>
+                                    <option value="electronics">Electronics</option>
+                                    <option value="books">Books</option>
+                                    <option value="fashion">Fashion</option>
+                                    <option value="home">Home & Kitchen</option>
+                                </select>
+                            </div>
+                            <div class="search-input-container">
+                                <input type="text" class="search-input" id="searchInput" 
+                                       placeholder="Search Amazon.in" autocomplete="off">
+                                <div class="search-suggestions" id="searchSuggestions"></div>
+                                <div class="search-voice-btn" id="voiceSearch">
+                                    <i class="fas fa-microphone"></i>
+                                </div>
+                            </div>
+                            <button class="search-btn" id="searchBtn">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                        <div class="search-trends">
+                            <span class="trend-item">iPhone 15</span>
+                            <span class="trend-item">Laptop deals</span>
+                            <span class="trend-item">Fashion sale</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Language/Country Section -->
+                <div class="col-auto d-none d-lg-block">
+                    <div class="nav-item language-selector" data-bs-toggle="dropdown">
+                        <div class="flag-container">
+                            <img src="{% static 'images/flag-india.png' %}" alt="IN" class="flag-icon">
+                        </div>
+                        <span class="lang-text">EN <i class="fas fa-caret-down"></i></span>
+                        <div class="dropdown-menu language-dropdown">
+                            <div class="dropdown-item active">
+                                <img src="{% static 'images/flag-india.png' %}" alt="IN" class="flag-icon me-2">
+                                English - IN
+                            </div>
+                            <div class="dropdown-item">
+                                <img src="{% static 'images/flag-india.png' %}" alt="IN" class="flag-icon me-2">
+                                हिन्दी - IN
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enhanced Account Section -->
+                <div class="col-auto">
+                    <div class="nav-item account-nav" data-bs-toggle="dropdown">
+                        {% if user.is_authenticated %}
+                            <div class="account-info">
+                                <div class="nav-item-top">Hello, {{ user.first_name|default:user.username|truncatechars:10 }}</div>
+                                <div class="nav-item-bottom">
+                                    Account & Lists 
+                                    <i class="fas fa-caret-down"></i>
+                                </div>
+                            </div>
+                            <div class="dropdown-menu account-dropdown">
+                                <div class="dropdown-header">
+                                    <div class="user-avatar">
+                                        <i class="fas fa-user-circle"></i>
+                                    </div>
+                                    <div class="user-info">
+                                        <strong>{{ user.get_full_name|default:user.username }}</strong>
+                                        <small>{{ user.email }}</small>
+                                    </div>
+                                </div>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Your Account</a>
+                                <a class="dropdown-item" href="#"><i class="fas fa-box me-2"></i>Your Orders</a>
+                                <a class="dropdown-item" href="#"><i class="fas fa-heart me-2"></i>Your Wish List</a>
+                                <div class="dropdown-divider"></div>
+                                <form method="post" action="{% url 'logout' %}" class="dropdown-item-form">
+                                    {% csrf_token %}
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Sign Out
+                                    </button>
+                                </form>
+                            </div>
+                        {% else %}
+                            <a href="{% url 'login' %}" class="account-link">
+                                <div class="nav-item-top">Hello, sign in</div>
+                                <div class="nav-item-bottom">Account & Lists <i class="fas fa-caret-down"></i></div>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Returns & Orders -->
+                <div class="col-auto d-none d-md-block">
+                    <a href="#" class="nav-item orders-nav">
+                        <div class="nav-item-top">Returns</div>
+                        <div class="nav-item-bottom">& Orders</div>
+                    </a>
+                </div>
+
+                <!-- Enhanced Cart Section -->
+                <div class="col-auto">
+                    <a href="#" class="nav-item cart-item">
+                        <div class="cart-container">
+                            <div class="cart-icon-wrapper">
+                                <i class="fas fa-shopping-cart cart-icon"></i>
+                                <span class="cart-count" id="cartCount">0</span>
+                                <div class="cart-pulse"></div>
+                            </div>
+                            <div class="cart-text">Cart</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Enhanced Navigation Bar -->
+    <nav class="amazon-nav" id="main-nav">
+        <div class="container-fluid">
+            <div class="nav-container">
+                <div class="nav-left">
+                    <div class="nav-links">
+                        <a href="#" class="nav-link hamburger-menu" data-bs-toggle="offcanvas" data-bs-target="#sideNav">
+                            <i class="fas fa-bars"></i> All
+                        </a>
+                        <a href="{% url 'product_list' %}" class="nav-link">
+                            <i class="fas fa-fire text-warning me-1"></i>Today's Deals
+                        </a>
+                        <a href="#" class="nav-link d-none d-md-inline">Customer Service</a>
+                        <a href="#" class="nav-link d-none d-lg-inline">Registry</a>
+                        <a href="#" class="nav-link d-none d-lg-inline">Gift Cards</a>
+                        <a href="#" class="nav-link d-none d-xl-inline">Sell</a>
+                    </div>
+                </div>
+                
+                <div class="nav-right d-none d-md-block">
+                    {% if not user.is_authenticated %}
+                        <a href="{% url 'register' %}" class="nav-link register-btn">
+                            <i class="fas fa-user-plus me-1"></i>Join Prime
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Side Navigation Offcanvas -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="sideNav">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title">
+                <i class="fas fa-user-circle me-2"></i>
+                {% if user.is_authenticated %}
+                    Hello, {{ user.first_name|default:user.username }}
+                {% else %}
+                    Hello, Sign in
+                {% endif %}
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="side-nav-section">
+                <h6>Digital Content & Devices</h6>
+                <ul class="side-nav-list">
+                    <li><a href="#"><i class="fas fa-music me-2"></i>Amazon Music</a></li>
+                    <li><a href="#"><i class="fas fa-kindle me-2"></i>Kindle E-readers & Books</a></li>
+                    <li><a href="#"><i class="fas fa-mobile-alt me-2"></i>Amazon Appstore</a></li>
+                </ul>
+            </div>
+            <div class="side-nav-section">
+                <h6>Shop by Category</h6>
+                <ul class="side-nav-list">
+                    <li><a href="#"><i class="fas fa-laptop me-2"></i>Electronics</a></li>
+                    <li><a href="#"><i class="fas fa-tshirt me-2"></i>Fashion</a></li>
+                    <li><a href="#"><i class="fas fa-home me-2"></i>Home & Kitchen</a></li>
+                    <li><a href="#"><i class="fas fa-book me-2"></i>Books</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Location Modal -->
+    <div class="modal fade" id="locationModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Choose your location</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Delivery options and delivery speeds may vary for different locations</p>
+                    <div class="location-input">
+                        <input type="text" class="form-control" placeholder="Enter pincode">
+                        <button class="btn btn-warning">Apply</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content" id="main-content">
+        <!-- Breadcrumb for non-home pages -->
+        {% block breadcrumb %}{% endblock %}
+        
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Enhanced Footer -->
+    <footer class="amazon-footer">
+        <!-- Back to top with smooth animation -->
+        <div class="back-to-top" id="backToTop">
+            <div class="back-to-top-content">
+                <span>Back to top</span>
+                <i class="fas fa-chevron-up"></i>
+            </div>
+        </div>
+
+        <!-- Main footer content -->
+        <div class="footer-content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-3 col-md-6 mb-4">
+                        <div class="footer-section">
+                            <h6><i class="fas fa-info-circle me-2"></i>Get to Know Us</h6>
+                            <ul class="footer-links">
+                                <li><a href="#">About Amazon</a></li>
+                                <li><a href="#">Careers</a></li>
+                                <li><a href="#">Press Releases</a></li>
+                                <li><a href="#">Amazon Science</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6 mb-4">
+                        <div class="footer-section">
+                            <h6><i class="fas fa-handshake me-2"></i>Connect with Us</h6>
+                            <ul class="footer-links">
+                                <li><a href="#"><i class="fab fa-facebook me-2"></i>Facebook</a></li>
+                                <li><a href="#"><i class="fab fa-twitter me-2"></i>Twitter</a></li>
+                                <li><a href="#"><i class="fab fa-instagram me-2"></i>Instagram</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6 mb-4">
+                        <div class="footer-section">
+                            <h6><i class="fas fa-rupee-sign me-2"></i>Make Money with Us</h6>
+                            <ul class="footer-links">
+                                <li><a href="#">Sell on Amazon</a></li>
+                                <li><a href="#">Sell under Amazon Accelerator</a></li>
+                                <li><a href="#">Amazon Global Selling</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6 mb-4">
+                        <div class="footer-section">
+                            <h6><i class="fas fa-life-ring me-2"></i>Let Us Help You</h6>
+                            <ul class="footer-links">
+                                <li><a href="#">Your Account</a></li>
+                                <li><a href="#">Your Orders</a></li>
+                                <li><a href="#">Shipping Rates & Policies</a></li>
+                                <li><a href="#">Amazon Prime</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer bottom with enhanced design -->
+        <div class="footer-bottom">
+            <div class="container">
+                <div class="footer-bottom-content">
+                    <div class="footer-logo-section">
+                        <img src="{% static 'images/amazon-logo.png' %}" alt="Amazon" class="footer-amazon-logo">
+                        <div class="footer-logo-glow"></div>
+                    </div>
+                    <div class="footer-links-bottom">
+                        <a href="#">Conditions of Use & Sale</a>
+                        <a href="#">Privacy Notice</a>
+                        <a href="#">Interest-Based Ads</a>
+                    </div>
+                    <div class="footer-copyright">
+                        <i class="far fa-copyright me-1"></i>
+                        1996-2024, Amazon.com, Inc. or its affiliates
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Floating Action Button for mobile -->
+    <div class="floating-action-btn d-md-none" id="floatingBtn">
+        <i class="fas fa-plus"></i>
+        <div class="fab-menu">
+            <a href="{% url 'product_list' %}" class="fab-item">
+                <i class="fas fa-home"></i>
+            </a>
+            <a href="#" class="fab-item">
+                <i class="fas fa-search"></i>
+            </a>
+            <a href="#" class="fab-item">
+                <i class="fas fa-shopping-cart"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    
+    {% block extra_js %}{% endblock %}
+
+    <!-- Service Worker for PWA (optional) -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/static/js/sw.js')
+                    .then(function(registration) {
+                        console.log('SW registered: ', registration);
+                    }).catch(function(registrationError) {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>
